@@ -3,4 +3,5 @@
 .RData
 .Ruserdata
 credentials.R
-.Rproj
+timeline.Rproj
+.httr-oauth

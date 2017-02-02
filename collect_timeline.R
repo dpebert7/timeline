@@ -4,37 +4,77 @@
 # Goal: Given a Twitter username, find out as much as possible
 # about the user
 
-
+# Setup ----
 source("credentials.R") #Load streamR and credentials
+1
 
 
-# Look at a user's information
-trump_info = getUser('realDonaldTrump')
-trump_info$name
-trump_info$screenName
-trump_info$id              #<- id is most efficient way of looking up users
-trump_info$description     #<- self description may include job/home info
-trump_info$statusesCount   #<- number of statuses
-trump_info$followersCount  #<- number of followers
-trump_info$favoritesCount  #<- tweets favorited?
-trump_info$friendsCount    #<- number of friends followed
-trump_info$url             #<- possible link to personal website?
-trump_info$created
-trump_info$protected       #<- not sure exactly what protected means.
-trump_info$location        #<- indicator usually of home area
-trump_info$listedCount     #<- another indication of popularity
-trump_info$profileImageUrl #<- profile image mignt be cool!
+
+# Main function ----
+
+get_user_details = function(username, num_tweets = 10, num_followers = 10){
+  require(twitteR)
+  # Get user's info
+  print("Getting user's information...")
+  user_info = getUser(username)
+  
+  # Print off the user's information
+  print("Printing user's information...")
+  print(user_info$name)
+  print(user_info$screenName)
+  print(user_info$id)              #<- id is most efficient way of looking up users
+  print(user_info$description)     #<- self description may include job/home info
+  print(user_info$statusesCount)   #<- number of statuses
+  print(user_info$followersCount)  #<- number of followers
+  print(user_info$favoritesCount)  #<- tweets favorited?
+  print(user_info$friendsCount)    #<- number of friends followed
+  print(user_info$url)             #<- possible link to personal website?
+  print(user_info$created)
+  print(user_info$protected)       #<- not sure exactly what protected means.
+  print(user_info$location)        #<- indicator usually of home area
+  print(user_info$listedCount)     #<- another indication of popularity
+  print(user_info$profileImageUrl) #<- profile image mignt be cool!
+  
+  # Get user's tweets
+  print("Printing user's tweets")
+  user_tweets = userTimeline(username, n = num_tweets)
+  print(user_tweets)
+  
+  # Get followers' ID's
+  print("Printing followers' ID's")
+  follower_ids = user_info$getFollowerIDs(n = num_followers)
+  print(follower_ids)
+  
+  # Get last status
+  print("Printing recent status for followers.")
+  for(user_id in follower_ids){
+    print(user_id)
+    recent_tweets = userTimeline(as.numeric(user_id), n = num_tweets)
+    print(recent_tweets)
+  }
+  
+}
 
 
-trump_info$getFollowerIDs(n = 10) # rate limit readched :(
+get_user_details('realDonaldTrump')
 
+
+
+
+
+
+# Rate lijmit tests ----
+
+#a = Sys.time()
+Sys.time()-a # wait for this to reach 15 secs.
+length(trump_info$getFollowerIDs(n = 1000)) # rate limit readched after 15 calls to the function
 
 multiple_users_info = lookupUsers(c('realDonaldTrump','POTUS', 'BadlandsNPS'))
 POTUS_tweets = userTimeline('POTUS') # Tweets 
 
 
 
-
+# Old and useless functions ----
 
 # The following functions aren't very useful. They only work on the user's timeline:
 homeTimeline()
